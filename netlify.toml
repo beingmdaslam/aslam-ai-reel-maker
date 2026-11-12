@@ -2,5 +2,8 @@
   publish = "."
   functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
+[[redirects]]
+  from = "/api/tts"
+  to = "/.netlify/functions/tts"
+  status = 200
+
