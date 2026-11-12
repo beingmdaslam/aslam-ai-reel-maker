@@ -108,16 +108,18 @@ async function make(){
  busy=true;$('make').disabled=true;$('preview').disabled=true;$('export').disabled=true;
  scenes=splitStory(story).map((text,i)=>({text,icon:visualFor(text),audio:null}));
  $('scenes').innerHTML='';$('status').textContent=`${scenes.length} scenes बनाए जा रहे हैं...`;
+ let mockVoice=false;
  try{
   for(let i=0;i<scenes.length;i++){
    $('status').textContent=`Scene ${i+1}/${scenes.length} की हिंदी आवाज़ बन रही है...`;
    const res=await fetch('/.netlify/functions/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:scenes[i].text,voice:$('voice').value})});
    const data=await res.json();
    if(!res.ok||!data.audioBase64)throw new Error(data.error||'Voice generate नहीं हुई।');
+   if(data.mock)mockVoice=true;
    scenes[i].audio='data:'+(data.mimeType||'audio/mpeg')+';base64,'+data.audioBase64;
    const el=document.createElement('div');el.className='scene';el.textContent=`${i+1}. ${scenes[i].icon} ${scenes[i].text}`;$('scenes').appendChild(el);
   }
-  $('status').textContent='तैयार! अब Preview चलाएँ या Video डाउनलोड करें।';
+  $('status').textContent=mockVoice?'Demo mode: असली आवाज़ के लिए SARVAM_API_KEY सेट करें (अभी silent placeholder audio है)। Preview या Video चला सकते हैं।':'तैयार! अब Preview चलाएँ या Video डाउनलोड करें।';
   $('preview').disabled=false;$('export').disabled=false;drawScene(0);
  }catch(e){$('status').textContent='समस्या: '+e.message+'\nNetlify function और SARVAM_API_KEY जाँचें।';}
  finally{busy=false;$('make').disabled=false;}
