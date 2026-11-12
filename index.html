@@ -1,166 +1,128 @@
-<!doctype html>
-<html lang="hi">
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090d18">
-<title>Aslam AI Reel Maker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aslam AI Movie Dubbing Studio</title>
 <style>
-:root{color-scheme:dark;--bg:#090d18;--panel:#141c2d;--line:#293752;--muted:#aab6ca;--accent:#8b7cff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0,#1c2850,#090d18 55%);color:#f7f8ff;font:15px system-ui,Arial}
-main{max-width:1050px;margin:auto;padding:22px 14px 50px}.head{display:flex;gap:12px;align-items:center;margin-bottom:20px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,#657dff,#b16cff);display:grid;place-items:center;font-size:24px}
-h1{font-size:24px;margin:0}.muted{color:var(--muted);line-height:1.5;margin:4px 0}.layout{display:grid;grid-template-columns:1fr 1fr;gap:15px}.panel{background:#141c2df0;border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:15px}
-label{display:block;font-weight:650;margin:12px 0 6px}textarea,select{width:100%;background:#0b1323;color:white;border:1px solid #34435e;border-radius:11px;padding:12px;font:inherit}textarea{min-height:145px;resize:vertical}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;padding:13px 16px;font:700 15px system-ui;cursor:pointer}.primary{background:linear-gradient(90deg,#667fff,#a16cff);color:white;width:100%;margin-top:15px}.secondary{background:#293752;color:white}.btn:disabled{opacity:.45;cursor:not-allowed}
-.stage{position:relative;max-width:360px;margin:0 auto;background:#050812;border:1px solid #35405a;border-radius:18px;overflow:hidden;aspect-ratio:9/16;width:100%}canvas{width:100%;height:100%;display:block}.status{background:#0b1323;border:1px solid #34435e;padding:10px;border-radius:10px;color:#c9d5ee;margin-top:12px;white-space:pre-wrap;font-size:13px}
-.scenes{display:grid;gap:8px;margin-top:12px}.scene{padding:10px;background:#0c1425;border:1px solid #2c3b56;border-radius:10px;font-size:13px;color:#dce5f8}
-.small{font-size:12px;color:#9eacc5}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.row .btn{flex:1}
-.note{font-size:12px;color:#c4cde0;background:#202b41;padding:11px;border-radius:10px;margin-top:12px}
-@media(max-width:760px){.layout{grid-template-columns:1fr}main{padding:16px 11px 35px}h1{font-size:21px}}
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080d18;color:white;
+ font-family:Arial,sans-serif;padding:20px;
+}
+.container{max-width:650px;margin:auto}
+h1{color:#48d9ff;text-align:center;font-size:27px}
+.subtitle{text-align:center;color:#aaa}
+.card{
+ background:#141e30;padding:20px;border-radius:16px;
+ margin-top:20px;border:1px solid #263751;
+}
+button,select{
+ width:100%;padding:15px;border-radius:10px;
+ border:0;font-size:16px;margin-top:12px;
+}
+button{
+ background:#08b9dc;color:#00111a;
+ font-weight:bold;cursor:pointer;
+}
+select{background:#25334a;color:white}
+input[type=file]{display:none}
+video{width:100%;margin-top:15px;border-radius:12px}
+.status{color:#49e6a5;text-align:center;margin-top:12px}
+.small{color:#aaa;font-size:13px;text-align:center}
 </style>
 </head>
-<body><main>
-<header class="head"><div class="logo">🎬</div><div><h1>Aslam AI Reel Maker</h1><p class="muted">Story → Hindi Voice → Scene-matched visuals → Subtitles → Video</p></div></header>
-<div class="layout">
-<section>
-<div class="panel">
-<h2 style="margin:0">अपनी कहानी डालें</h2>
-<p class="muted">कहानी को छोटे वाक्यों में लिखें। वेबसाइट अपने आप scenes बनाएगी।</p>
-<label for="story">कहानी / Script</label>
-<textarea id="story" placeholder="एक गरीब लड़का रोज़ मेहनत करता था। एक दिन उसकी जिंदगी बदल गई..."></textarea>
-<div class="grid">
-<div><label for="voice">आवाज़</label><select id="voice"><option>Deep male narrator</option><option>Calm male narrator</option><option>Female narrator</option></select></div>
-<div><label for="format">वीडियो आकार</label><select id="format"><option value="portrait">Reels 9:16</option><option value="landscape">YouTube 16:9</option><option value="square">Square 1:1</option></select></div>
+<body>
+<div class="container">
+
+<h1>🎬 ASLAM AI</h1>
+<p class="subtitle">Movie Dubbing Studio</p>
+
+<div class="card">
+<h2>Upload Your Movie</h2>
+<p>Select your movie or video from your phone.</p>
+
+<input
+ type="file"
+ id="videoFile"
+ accept="video/*"
+>
+
+<button type="button" id="uploadBtn">
+📁 SELECT VIDEO
+</button>
+
+<p id="fileName" class="status">No video selected</p>
+
+<video id="preview" controls playsinline style="display:none"></video>
 </div>
-<button class="btn primary" id="make">🎙️ Voice और scenes तैयार करो</button>
-<div class="status" id="status">पहले कहानी लिखें। फिर बटन दबाएँ।</div>
-<div class="scenes" id="scenes"></div>
-<div class="note">Voice बनाने के लिए Netlify में SARVAM_API_KEY पहले से सेट होना चाहिए। API की मुफ्त usage limit हो सकती है।</div>
+
+<div class="card">
+<h2>🌍 Dubbing Settings</h2>
+
+<label>Target Language</label>
+<select id="language">
+<option>Hindi</option>
+<option>English</option>
+<option>Arabic</option>
+<option>Urdu</option>
+<option>French</option>
+<option>Spanish</option>
+<option>German</option>
+<option>Chinese</option>
+<option>Japanese</option>
+<option>Bengali</option>
+<option>Turkish</option>
+<option>Portuguese</option>
+</select>
+
+<label>Video Quality</label>
+<select id="quality">
+<option>1080p HD</option>
+<option>4K Ultra HD</option>
+</select>
+
+<button type="button" id="startBtn">START DUBBING</button>
+<p class="small" id="message">
+AI processing backend is not connected yet.
+</p>
 </div>
-</section>
-<section>
-<div class="panel">
-<h2 style="margin:0 0 5px">वीडियो Preview</h2>
-<div class="stage"><canvas id="screen" width="720" height="1280"></canvas></div>
-<div class="row"><button class="btn secondary" id="preview" disabled>▶ Preview चलाओ</button><button class="btn primary" id="export" disabled>⬇ Video डाउनलोड</button></div>
-<p class="small">डाउनलोड WebM format में होगा। Chrome/Android में यही भरोसेमंद browser recording format है।</p>
-<div class="note">हर scene की voice अलग generate होती है। Preview/export के दौरान उसी voice segment के साथ matching visual और subtitle दिखते हैं।</div>
+
 </div>
-</section>
-</div>
-<p class="small">Made for Aslam · इस version में visuals कहानी के keywords के अनुसार animated illustrated scenes हैं, असली AI-generated film footage नहीं।</p>
-</main>
+
 <script>
-const $=id=>document.getElementById(id);
-let scenes=[], current=0, busy=false, audioEl=new Audio(), audioCtx=null, sourceNode=null;
-const canvas=$('screen'),ctx=canvas.getContext('2d');
-function splitStory(s){
- const bits=s.replace(/\n+/g,' ').match(/[^.!?।]+[.!?।]?/g)||[s];
- let arr=bits.map(x=>x.trim()).filter(Boolean);
- if(arr.length>8){let grouped=[];for(let i=0;i<arr.length;i+=Math.ceil(arr.length/8))grouped.push(arr.slice(i,i+Math.ceil(arr.length/8)).join(' '));arr=grouped;}
- return arr.slice(0,8);
-}
-function visualFor(t){
- const s=t.toLowerCase();
- const map=[
-  [/गरीब|भूख|मजदूर|मेहनत|किसान|गांव|गाँव/,'🌾'],
-  [/प्यार|मोहब्बत|दिल|दोस्त|माँ|मां|बेटा|बेटी|परिवार/,'❤️'],
-  [/रात|अंधेरा|डर|खौफ|तन्हा|अकेला/,'🌙'],
-  [/शहर|सड़क|सफर|रास्ता|मंजिल|मंज़िल/,'🌆'],
-  [/पैसा|अमीर|सफल|जीत|कामयाब|खुशी/,'✨'],
-  [/बारिश|नदी|समुद्र|पानी|आसमान|बादल/,'🌧️'],
-  [/मौत|कब्र|जंग|युद्ध|खून/,'⚔️'],
-  [/अल्लाह|दुआ|मस्जिद|नमाज|नमाज़/,'🕌']
- ];
- for(const [re,icon] of map)if(re.test(s))return icon;
- return '🎬';
-}
-function drawScene(i, progress=0){
- const sc=scenes[i]; if(!sc)return;
- const w=canvas.width,h=canvas.height;
- const palettes=[['#0e2444','#431f55'],['#173b4a','#142344'],['#39223e','#111d39'],['#163a36','#17234b']];
- const p=palettes[i%palettes.length],g=ctx.createLinearGradient(0,0,w,h);
- g.addColorStop(0,p[0]);g.addColorStop(1,p[1]);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
- // cinematic light and moving horizon
- const x=w*(.25+.5*((Math.sin(progress*6+i)+1)/2));
- const glow=ctx.createRadialGradient(x,h*.38,10,x,h*.38,w*.65);
- glow.addColorStop(0,'rgba(255,220,170,.30)');glow.addColorStop(1,'rgba(255,220,170,0)');
- ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
- ctx.fillStyle='rgba(0,0,0,.18)';
- for(let k=0;k<7;k++){let bx=(k*137+i*31)%w;let bh=h*(.12+(k%3)*.06);ctx.fillRect(bx,h*.66-bh, w*.1,bh);}
- ctx.textAlign='center';ctx.fillStyle='#fff';ctx.shadowColor='#000';ctx.shadowBlur=22;
- ctx.font=`${Math.floor(w*.22)}px system-ui`;ctx.fillText(sc.icon,w/2,h*.42);
- ctx.shadowBlur=0;
- ctx.fillStyle='rgba(5,9,20,.68)';ctx.fillRect(35,h*.69,w-70,h*.22);
- ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font=`600 ${Math.floor(w*.045)}px system-ui`;
- wrapText(sc.text,w/2,h*.76,w-110,Math.floor(w*.065));
- ctx.fillStyle='#d6ddf0';ctx.font=`${Math.floor(w*.025)}px system-ui`;ctx.fillText(`SCENE ${i+1} / ${scenes.length}`,w/2,h*.95);
-}
-function wrapText(text,x,y,maxWidth,lineHeight){
- let words=text.split(/\s+/),line='',lines=[];
- for(const word of words){let test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
- if(line)lines.push(line);lines=lines.slice(0,4);
- lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));
-}
-async function make(){
- if(busy)return;
- const story=$('story').value.trim();if(!story){$('status').textContent='पहले कहानी लिखें।';return;}
- if(story.length>10000){$('status').textContent='कहानी बहुत लंबी है। कृपया 10,000 characters से कम रखें।';return;}
- busy=true;$('make').disabled=true;$('preview').disabled=true;$('export').disabled=true;
- scenes=splitStory(story).map((text,i)=>({text,icon:visualFor(text),audio:null}));
- $('scenes').innerHTML='';$('status').textContent=`${scenes.length} scenes बनाए जा रहे हैं...`;
- let mockVoice=false;
- try{
-  for(let i=0;i<scenes.length;i++){
-   $('status').textContent=`Scene ${i+1}/${scenes.length} की हिंदी आवाज़ बन रही है...`;
-   const res=await fetch('/.netlify/functions/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:scenes[i].text,voice:$('voice').value})});
-   const data=await res.json();
-   if(!res.ok||!data.audioBase64)throw new Error(data.error||'Voice generate नहीं हुई।');
-   if(data.mock)mockVoice=true;
-   scenes[i].audio='data:'+(data.mimeType||'audio/mpeg')+';base64,'+data.audioBase64;
-   const el=document.createElement('div');el.className='scene';el.textContent=`${i+1}. ${scenes[i].icon} ${scenes[i].text}`;$('scenes').appendChild(el);
-  }
-  $('status').textContent=mockVoice?'Demo mode: असली आवाज़ के लिए SARVAM_API_KEY सेट करें (अभी silent placeholder audio है)। Preview या Video चला सकते हैं।':'तैयार! अब Preview चलाएँ या Video डाउनलोड करें।';
-  $('preview').disabled=false;$('export').disabled=false;drawScene(0);
- }catch(e){$('status').textContent='समस्या: '+e.message+'\nNetlify function और SARVAM_API_KEY जाँचें।';}
- finally{busy=false;$('make').disabled=false;}
-}
-function setupAudio(){
- if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)();sourceNode=audioCtx.createMediaElementSource(audioEl);sourceNode.connect(audioCtx.destination);}
-}
-async function playAll(record=false){
- if(!scenes.length)return;
- setupAudio();await audioCtx.resume();
- let recorder=null,chunks=[];
- if(record){
-  const stream=canvas.captureStream(30),dest=audioCtx.createMediaStreamDestination();
-  sourceNode.connect(dest);
-  dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
-  const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';
-  recorder=new MediaRecorder(stream,{mimeType:mime});recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
-  recorder.start(500);
+const uploadBtn = document.getElementById("uploadBtn");
+const videoFile = document.getElementById("videoFile");
+const preview = document.getElementById("preview");
+const fileName = document.getElementById("fileName");
+
+uploadBtn.addEventListener("click", function() {
+ videoFile.click();
+});
+
+videoFile.addEventListener("change", function() {
+ const file = this.files[0];
+
+ if (!file) return;
+
+ if (!file.type.startsWith("video/")) {
+   fileName.textContent = "Please select a video file.";
+   return;
  }
- $('preview').disabled=true;$('export').disabled=true;
- for(let i=0;i<scenes.length;i++){
-  current=i;drawScene(i);
-  await new Promise((resolve,reject)=>{
-   audioEl.src=scenes[i].audio;audioEl.onended=resolve;audioEl.onerror=()=>reject(new Error('Audio playback failed'));
-   audioEl.play().catch(reject);
-   const start=performance.now();
-   const animate=now=>{if(current!==i)return;drawScene(i,(now-start)/1000);if(!audioEl.paused)requestAnimationFrame(animate);};
-   requestAnimationFrame(animate);
-  });
+
+ preview.src = URL.createObjectURL(file);
+ preview.style.display = "block";
+ fileName.textContent = "Selected: " + file.name;
+});
+
+document.getElementById("startBtn").addEventListener("click", function() {
+ if (!videoFile.files.length) {
+   alert("Please select a video first.");
+   return;
  }
- if(recorder){
-  await new Promise(resolve=>{recorder.onstop=resolve;recorder.stop();});
-  const blob=new Blob(chunks,{type:'video/webm'}),url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='aslam-ai-reel.webm';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
- }
- $('preview').disabled=false;$('export').disabled=false;$('status').textContent=record?'Video तैयार है और डाउनलोड शुरू हो गया।':'Preview पूरा हुआ।';
-}
-$('make').addEventListener('click',make);
-$('preview').addEventListener('click',()=>playAll(false).catch(e=>$('status').textContent=e.message));
-$('export').addEventListener('click',()=>playAll(true).catch(e=>$('status').textContent=e.message));
-function resize(){const f=$('format').value;if(f==='landscape'){canvas.width=1280;canvas.height=720;}else if(f==='square'){canvas.width=900;canvas.height=900;}else{canvas.width=720;canvas.height=1280;}if(scenes.length)drawScene(current);}
-$('format').addEventListener('change',resize);resize();
-drawScene(0);
-</script></body></html>
+ alert("Video selected successfully. AI processing backend is not connected yet.");
+});
+</script>
+</body>
+</html>
